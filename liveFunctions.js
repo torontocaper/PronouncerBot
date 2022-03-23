@@ -16,9 +16,18 @@ function createNewPronouncerDoc() {
   var date = new Date;
   var prettyDate = date.toDateString();
 
-  //create new doc with date in title
-  //var doc = DocumentApp.create(`The CP Pronouncer list for ${prettyDate}`);
+  //add title 
+  doc.setName(`The CP Pronouncer list for ${prettyDate}`);
   
+  //clear out existing text 
+  let paras = doc.getBody().getParagraphs();
+  paras.forEach((para) => {
+    para.clear();
+  })
+  paras = [];
+  let docBody = doc.getBody();
+  docBody.clear();
+
   //add intro
   doc.getBody().insertParagraph(0, `The CP Pronouncer list for ${prettyDate}.`)
   doc.getBody().appendParagraph(`This is a work in progress. Questions? Comments? Contact Adam Burns (amb@cp.org).`)
@@ -44,9 +53,8 @@ function createNewPronouncerDoc() {
     
   }
 
-  //log URL and send as an alert
+  //log URL
   Logger.log(url); 
-  //SpreadsheetApp.getUi().alert(`Here's the link: ${url}`)
 
 }
 
