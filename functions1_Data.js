@@ -1,9 +1,3 @@
-function SortByTitle() {
-  var spreadsheet = SpreadsheetApp.getActive();
-  spreadsheet.getRange('B:B').activate();
-  spreadsheet.getActiveSheet().sort(2, true);
-}
-
 function createNewPronouncerDoc() {
 
   //get existing doc template
@@ -56,4 +50,3 @@ function createNewPronouncerDoc() {
   SpreadsheetApp.getUi().showModalDialog(modalHtml, "Pronouncer Guide Ready")
 
 }
-
