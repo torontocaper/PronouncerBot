@@ -8,6 +8,7 @@ function createNewPronouncerDoc() {
 
   //get existing doc template
   var doc = DocumentApp.openById("1HbkohjN85eOX_ioYAQUBvWnkl0X79qgycIKbjQJmUYc");
+  const docUrl = doc.getUrl();
 
   //get date object and convert to string
   var prettyDate = new Date().toDateString();
@@ -20,6 +21,8 @@ function createNewPronouncerDoc() {
   paras.forEach((para) => {
     para.clear();
   })
+
+  //initialize containers for new data
   paras = [];
   let docBody = doc.getBody();
   docBody.clear();
@@ -32,7 +35,6 @@ function createNewPronouncerDoc() {
   var sheetValues = SpreadsheetApp.openById("17HucDwuBYfEqXIMz8_nxqMlN1C_06hh1RLccntmlsYI").getSheetByName("Form Responses 1").getSheetValues(2, 6, -1, -1);
 
   //iterate through alphabet
-   
   for (n = 0; n <= 25; n++) {
 
     //letter variable starts at capital "A" (CharCode 65)
@@ -48,6 +50,10 @@ function createNewPronouncerDoc() {
     entries.forEach(entry => doc.getBody().appendParagraph(entry.toString()));
     
   }
+
+  //prompt the user with the URL
+  const modalHtml = HtmlService.createHtmlOutput(`<p>The new pronouncer guide is ready! Click <a href="${docUrl}" target="_blank" rel="noopener noreferrer">here</a> to see it.</p>`)
+  SpreadsheetApp.getUi().showModalDialog(modalHtml, "Pronouncer Guide Ready")
 
 }
 
