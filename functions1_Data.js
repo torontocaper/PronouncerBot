@@ -26,7 +26,7 @@ function createNewPronouncerDoc() {
   doc.getBody().appendParagraph(`This is a work in progress. Questions? Comments? Contact Adam Burns (amb@cp.org).`)
 
   //get values in concatenated column
-  var sheetValues = SpreadsheetApp.openById("17HucDwuBYfEqXIMz8_nxqMlN1C_06hh1RLccntmlsYI").getSheetByName("Form Responses 1").getSheetValues(2, 6, -1, -1);
+  var sheetValues = SpreadsheetApp.getActive().getSheetByName("Form Responses 1").getSheetValues(2, 6, -1, -1);
 
   //iterate through alphabet
   for (n = 0; n <= 25; n++) {
