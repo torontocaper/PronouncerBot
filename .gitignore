@@ -1,2 +1,5 @@
 # test-functions contains sensitive info
 test/functions.js
+
+# so does appsscript.json
+appsscript.json
