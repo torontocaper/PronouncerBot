@@ -1,7 +1,10 @@
 function createNewPronouncerDoc() {
 
+  //get documentID from properties service
+  let docID = PropertiesService.getDocumentProperties().getProperty("documentID");
+  
   //get existing doc template
-  var doc = DocumentApp.openById("1HbkohjN85eOX_ioYAQUBvWnkl0X79qgycIKbjQJmUYc");
+  var doc = DocumentApp.openById(docID);
   const docUrl = doc.getUrl();
 
   //get date object and convert to string
