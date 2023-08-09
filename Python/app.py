@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime
 
@@ -10,6 +11,10 @@ load_dotenv()
 bot_token = os.getenv("BOT_USER_TOKEN")
 client = WebClient(token=bot_token)
 headers = {"Authorization": "Bearer " + bot_token}
+
+# Load JSON data from file
+with open("Python/pronouncers.json", "r") as json_file:
+    pronouncer_data = json.load(json_file)
 
 app = Flask(__name__)
 
@@ -65,7 +70,19 @@ def handle_slack_event():
                 messages = conversation.get("messages")
                 message_text = messages[0]["text"]
                 print(f"{datetime.now()}: Pronouncer requested for \"{message_text}\".")
+
+                # Search for a specific name
+                search_text = message_text
+                found_entries = []
+
+                for entry in pronouncer_data:
+                    if search_text in entry["Title"]:
+                        found_entries.append(entry)
+
+                for entry in found_entries:
+                    print(entry)
+
                 return "OK"
-                
+
 if __name__ == '__main__':
     app.run(debug=True)
