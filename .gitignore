@@ -1,5 +1,1 @@
-# test-functions contains sensitive info
-test/functions.js
-
-# so does .clasp.json
-.clasp.json
+Python/.env
