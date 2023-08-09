@@ -73,16 +73,21 @@ def handle_slack_event():
 
                 # Search for a specific name
                 search_text = message_text
-                found_entries = []
+                matches = []
 
                 for entry in pronouncer_data:
-                    if search_text in entry["Title"]:
-                        found_entries.append(entry)
+                    if search_text.lower() in entry["Title"].lower():
+                       matches.append(entry)
 
-                client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"We found {len(found_entries)} matches for your search.")
+                if len(matches) == 0:
+                    client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"No matches. Sorry!")
 
-                for entry in found_entries:
-                    print(entry)
+                else:
+                    client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"We found {len(matches)} matches!") 
+                    for match in matches:
+                        title = match["Title"]
+                        pronouncer = match["Pronouncer"]
+                        client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"{title} - {pronouncer}.")
 
                 return "OK"
 
