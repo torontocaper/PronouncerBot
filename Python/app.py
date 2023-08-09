@@ -1,13 +1,15 @@
 import os
-
 from datetime import datetime
 
 from dotenv import load_dotenv
 from flask import Flask, request
+from slack_sdk import WebClient
 
-# get bot token from .env
+# get the bot token for authentication and fire up the slack client
 load_dotenv()
 bot_token = os.getenv("BOT_USER_TOKEN")
+client = WebClient(token=bot_token)
+headers = {"Authorization": "Bearer " + bot_token}
 
 app = Flask(__name__)
 
@@ -43,7 +45,27 @@ def handle_slack_event():
     
         print(f"{datetime.now()}: Inner event info: Event: {event_id}; User: {user_id}; Reaction: {reaction_type}; Channel: {channel_id}; Timestamp: {timestamp}.")
 
-        return "OK"
+        if event_id in event_cache:
+            print(f"{datetime.now()}: Event {event_id} has already been processed. Exiting event handler.")
+            return "OK"
 
+        else: 
+            print(f"{datetime.now()}: Event {event_id} has not been processed. Starting event processing.")
+            event_cache.append(event_id)
+
+            # handle emoji reactions
+            if reaction_type != "pronounce":
+                print(f"{datetime.now()}: Reaction was of type :{reaction_type}:. Exiting event handler.")
+                return "OK"
+            else:
+                conversation = client.conversations_replies(
+                    channel=channel_id,
+                    ts=timestamp
+                )
+                messages = conversation.get("messages")
+                message_text = messages[0]["text"]
+                print(f"{datetime.now()}: Pronouncer requested for \"{message_text}\".")
+                return "OK"
+                
 if __name__ == '__main__':
     app.run(debug=True)
