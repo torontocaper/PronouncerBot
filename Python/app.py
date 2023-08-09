@@ -79,6 +79,8 @@ def handle_slack_event():
                     if search_text in entry["Title"]:
                         found_entries.append(entry)
 
+                client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"We found {len(found_entries)} matches for your search.")
+
                 for entry in found_entries:
                     print(entry)
 
