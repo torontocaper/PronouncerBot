@@ -24,30 +24,70 @@ print(f"{datetime.now()}: Current event cache: {event_cache}.")
 @app.route("/", methods=["POST"])
 def handle_slack_event():
     print(f"{datetime.now()}: Request received. Starting event handler.")
-    print(request.form)
-
+    
     if "payload" in request.form:
-        print("Shortcut invoked")
+        print(f"{datetime.now()}: Shortcut invoked. Proceeding with modal.")
         payload = json.loads(request.form["payload"])
         trigger_id = payload["trigger_id"]
         client.views_open(
-            
             trigger_id=trigger_id,
             view={
                 "type": "modal",
-                "title": {"type": "plain_text", "text": "Hello, user"},
-                "close": {"type": "plain_text", "text": "Close"},
-
+                "title": {"type": "plain_text", "text": "Add a pronouncer"},
+                "submit": {"type": "plain_text", "text": "Add Pronouncer"},
                 "blocks": [
                     {
                         "type": "section",
                         "text": {
                             "type": "plain_text",
-                            "text": "Hello, block user"
+                            "text": "Use this form to add an entry to the CP Pronouncer Guide!"
                         }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "pronouncer_title",
+                            "initial_value": "The unfamiliar term"
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Title"
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "pronouncer_pronouncer",
+                            "initial_value": "Pronouncer goes here"
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Pronouncer"
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "pronouncer_description",
+                            "initial_value": "A brief description (optional)"
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Description"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "When you're ready, click the button!"
+                        },
                     }
-                ]
-            }
+	            ]
+            }           
         )
         return "OK"
 
