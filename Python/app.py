@@ -28,8 +28,27 @@ def handle_slack_event():
 
     if "payload" in request.form:
         print("Shortcut invoked")
-        payload = request.form["payload"]
-        print(payload)
+        payload = json.loads(request.form["payload"])
+        trigger_id = payload["trigger_id"]
+        client.views_open(
+            
+            trigger_id=trigger_id,
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Hello, user"},
+                "close": {"type": "plain_text", "text": "Close"},
+
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Hello, block user"
+                        }
+                    }
+                ]
+            }
+        )
         return "OK"
 
     request_data = request.get_json()
