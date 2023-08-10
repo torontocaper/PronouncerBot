@@ -63,10 +63,14 @@ def handle_slack_event():
                 conversation = client.conversations_replies(
                     channel=channel_id,
                     ts=timestamp
-                )
+                    )
                 messages = conversation.get("messages")
                 message_text = messages[0]["text"]
-                client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"Hey <@{user_id}>, thanks for calling PronouncerBot. I'll look for a pronouncer for {message_text}.")
+                client.chat_postMessage(
+                    channel=channel_id,
+                    thread_ts=timestamp,
+                    text=f"Hey <@{user_id}>, thanks for calling PronouncerBot. I'll look for a pronouncer for {message_text}."
+                    )
 
                 # search the database for the message text
                 matches = []
@@ -76,25 +80,57 @@ def handle_slack_event():
 
                 # if no matches are found
                 if len(matches) == 0:
-                    client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"No matches. Sorry!")
-
+                    client.chat_postMessage(
+                        channel=channel_id,
+                        thread_ts=timestamp,
+                        text=f"No matches. Sorry!"
+                        )
                 
                 # if one match is found
                 elif len(matches) == 1:
                     client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"I found a match!")
                     title = matches[0]["Title"]
                     pronouncer = matches[0]["Pronouncer"]
-                    client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"{title} - {pronouncer}.")
+                    client.chat_postMessage(
+                        channel=channel_id,
+                        thread_ts=timestamp,
+                        text=f"{title} - {pronouncer}."
+                        )
 
                 # if several matches are found
                 else:
-                    client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"I found {len(matches)} potential matches!") 
+                    client.chat_postMessage(
+                        channel=channel_id,
+                        thread_ts=timestamp,
+                        text=f"I found {len(matches)} potential matches!"
+                        ) 
                     for match in matches:
                         title = match["Title"]
                         pronouncer = match["Pronouncer"]
-                        client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"{title} - {pronouncer}.")
+                        client.chat_postMessage(
+                            channel=channel_id,
+                            thread_ts=timestamp,
+                            text=f"{title} - {pronouncer}."
+                            )
 
                 return "OK"
+
+# format the message using blocks
+def send_simple_message(channel_id, timestamp):
+    message = ""
+    client.chat_postMessage(
+        channel=channel_id,
+        thread_ts=timestamp,
+        text=message
+    )
+    return "OK"
+
+def format_block():
+    pass
+
+def add_pronouncer():
+    # add a json-formatted object to the main database
+    pass
 
 if __name__ == '__main__':
     app.run(debug=True)
