@@ -95,7 +95,7 @@ def handle_slack_event():
 
     if "challenge" in request_data:
         challenge_key = request_data["challenge"]
-        print(f"{datetime.now()}: This is an authentication challenge from Slack. The challenge key is {challenge_key}")
+        print(f"{datetime.now()}: This is an authentication challenge from Slack. Returning challenge key.")
         return challenge_key
     
     else:
@@ -126,80 +126,72 @@ def handle_slack_event():
                 print(f"{datetime.now()}: Reaction was of type :{reaction_type}:. Exiting event handler.")
                 return "OK"
             else:
-                conversation = client.conversations_replies(
-                    channel=channel_id,
-                    ts=timestamp
-                    )
-                messages = conversation.get("messages")
-                message_text = messages[0]["text"]
-                client.chat_postMessage(
-                    channel=channel_id,
-                    thread_ts=timestamp,
-                    text=f"Hey <@{user_id}>, thanks for calling PronouncerBot. I'll look for a pronouncer for {message_text}."
-                    )
-
-                # search the database for the message text
-                matches = []
-                for entry in pronouncer_data:
-                    if message_text.lower() in entry["Title"].lower():
-                       matches.append(entry)
-
-                # if no matches are found
-                if len(matches) == 0:
-                    client.chat_postMessage(
-                        channel=channel_id,
-                        thread_ts=timestamp,
-                        text=f"No matches. Sorry!"
-                        )
+                handle_pronouncer_request(channel_id, timestamp, user_id)
                 
-                # if one match is found
-                elif len(matches) == 1:
-                    client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"I found a match!")
-                    title = matches[0]["Title"]
-                    pronouncer = matches[0]["Pronouncer"]
-                    client.chat_postMessage(
-                        channel=channel_id,
-                        thread_ts=timestamp,
-                        text=f"{title} - {pronouncer}."
-                        )
-
-                # if several matches are found
-                else:
-                    client.chat_postMessage(
-                        channel=channel_id,
-                        thread_ts=timestamp,
-                        text=f"I found {len(matches)} potential matches!"
-                        ) 
-                    for match in matches:
-                        title = match["Title"]
-                        pronouncer = match["Pronouncer"]
-                        client.chat_postMessage(
-                            channel=channel_id,
-                            thread_ts=timestamp,
-                            text=f"{title} - {pronouncer}."
-                            )
-
                 return "OK"
 
-# format the message using blocks
-def send_simple_message(channel_id, timestamp):
-    message = ""
+def handle_pronouncer_request(channel_id, timestamp, user_id):
+    conversation = client.conversations_replies(
+        channel=channel_id,
+        ts=timestamp
+        )
+    messages = conversation.get("messages")
+    message_text = messages[0]["text"]
     client.chat_postMessage(
         channel=channel_id,
         thread_ts=timestamp,
-        text=message
-    )
-    return "OK"
+        text=f"Hey <@{user_id}>, thanks for calling PronouncerBot. I'll look for a pronouncer for \"{message_text}\"."
+        )
 
-def format_block():
-    pass
+    # search the database for the message text
+    matches = []
+    for entry in pronouncer_data:
+        if message_text.lower() in entry["Title"].lower():
+            matches.append(entry)
 
-def add_pronouncer():
-    # add a json-formatted object to the main database
-    pass
+    # if no matches are found
+    if len(matches) == 0:
+        client.chat_postMessage(
+            channel=channel_id,
+            thread_ts=timestamp,
+            text=f"No matches. Sorry!"
+            )
 
-def sort_pronouncers():
-    pass
+    # if one match is found
+    elif len(matches) == 1:
+        client.chat_postMessage(channel=channel_id, thread_ts=timestamp, text=f"I found a match!")
+        title = matches[0]["Title"]
+        pronouncer = matches[0]["Pronouncer"]
+        client.chat_postMessage(
+            channel=channel_id,
+            thread_ts=timestamp,
+            text=f"{title} - {pronouncer}."
+            )
+
+    # if several matches are found
+    elif len(matches) <= 10:
+        client.chat_postMessage(
+            channel=channel_id,
+            thread_ts=timestamp,
+            text=f"I found {len(matches)} potential matches!"
+            ) 
+        for match in matches:
+            title = match["Title"]
+            pronouncer = match["Pronouncer"]
+            client.chat_postMessage(
+                channel=channel_id,
+                thread_ts=timestamp,
+                text=f"{title} - {pronouncer}."
+                )
+
+    # if too many matches are found
+    else: 
+        client.chat_postMessage(
+            channel=channel_id,
+            thread_ts=timestamp,
+            text=f"I found more than 10 potential matches. Please try again (but be more specific)!"
+            )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
