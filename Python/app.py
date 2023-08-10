@@ -23,9 +23,16 @@ print(f"{datetime.now()}: Current event cache: {event_cache}.")
 
 @app.route("/", methods=["POST"])
 def handle_slack_event():
-    request_data = request.get_json()
-
     print(f"{datetime.now()}: Request received. Starting event handler.")
+    print(request.form)
+
+    if "payload" in request.form:
+        print("Shortcut invoked")
+        payload = request.form["payload"]
+        print(payload)
+        return "OK"
+
+    request_data = request.get_json()
 
     if "challenge" in request_data:
         challenge_key = request_data["challenge"]
@@ -130,6 +137,9 @@ def format_block():
 
 def add_pronouncer():
     # add a json-formatted object to the main database
+    pass
+
+def sort_pronouncers():
     pass
 
 if __name__ == '__main__':
