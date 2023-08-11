@@ -26,97 +26,8 @@ def handle_slack_event():
     print(f"{datetime.now()}: Request received. Starting event handler.")
 
     if "payload" in request.form:
-        print(f"{datetime.now()}: Payload received.")
-        payload = json.loads(request.form["payload"])
-        print(payload)
-        trigger_id = payload["trigger_id"]
-        
-        if payload["type"] == "shortcut":
-            print(f"{datetime.now()}: Shortcut invoked. Opening modal.")
-            client.views_open(
-                trigger_id=trigger_id,
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "Add a pronouncer"},
-                    "submit": {"type": "plain_text", "text": "Submit"},
-                    "callback_id": "submit_pronouncer",
-                    "blocks": [
-                        {
-                            "type": "input",
-                            "element": {
-                                "type": "plain_text_input",
-                                "action_id": "pronouncer_title",
-                            },
-                            "label": {
-                                "type": "plain_text",
-                                "text": "Title"
-                            }
-                        },
-                        {
-                            "type": "input",
-                            "element": {
-                                "type": "plain_text_input",
-                                "action_id": "pronouncer_pronouncer",
-                            },
-                            "label": {
-                                "type": "plain_text",
-                                "text": "Pronouncer"
-                            }
-                        },
-                        {
-                            "type": "input",
-                            "element": {
-                                "type": "plain_text_input",
-                                "action_id": "pronouncer_description",
-                            },
-                            "label": {
-                                "type": "plain_text",
-                                "text": "Description (optional)"
-                            }
-                        }
-                    ]
-                }           
-            )
-            return "OK"
-
-        elif payload["type"] == "view_submission":
-            print(f"{datetime.now()}: Submission received. Processing input.")
-            view_id = payload["view"]["id"]
-            client.views_update(
-                token=bot_token,
-                view={
-                    "type": "modal",
-                    "title": {"type": "plain_text", "text": "Add a pronouncer"},
-                    "blocks": [
-                        {
-			            "type": "section",
-			            "text": {
-				            "type": "plain_text",
-				            "text": "Thanks for the submission! You can close this box."
-                            }
-		                }
-                    ]
-                },
-                view_id=view_id
-            )
-
-            values = payload["view"]["state"]["values"]
-            
-            for key, info in values.items():
-                print(f"Random key: {key}\nInfo: {info}")
-                if "pronouncer_title" in info:
-                    new_title = info["pronouncer_title"]["value"]
-                elif "pronouncer_pronouncer" in info:
-                    new_pronouncer = info["pronouncer_pronouncer"]["value"]
-                elif "pronouncer_description" in info:
-                    new_description = info["pronouncer_description"]["value"]
-            
-            print(f"{new_title} - {new_pronouncer} ({new_description})")
-
-            return "OK"
-      
-        else:
-            return "OK"
+        handle_payload(request)
+        return "OK"
 
     request_data = request.get_json()
 
@@ -157,6 +68,110 @@ def handle_slack_event():
                 
                 return "OK"
 
+def handle_payload(request_data):
+    print(f"{datetime.now()}: Payload received.")
+    payload = json.loads(request_data.form["payload"])
+    print(payload)
+    trigger_id = payload["trigger_id"]
+    
+    if payload["type"] == "shortcut":
+        print(f"{datetime.now()}: Shortcut invoked. Opening modal.")
+        client.views_open(
+            trigger_id=trigger_id,
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Add a pronouncer"},
+                "submit": {"type": "plain_text", "text": "Submit"},
+                "callback_id": "submit_pronouncer",
+                "blocks": [
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "pronouncer_title",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Title"
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "pronouncer_pronouncer",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Pronouncer"
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input",
+                            "action_id": "pronouncer_description",
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Description (optional)"
+                        }
+                    }
+                ]
+            }           
+        )
+        return "OK"
+
+    elif payload["type"] == "view_submission":
+        print(f"{datetime.now()}: Submission received. Processing input.")
+        view_id = payload["view"]["id"]
+        
+        values = payload["view"]["state"]["values"]
+        
+        for key, info in values.items():
+            if "pronouncer_title" in info:
+                new_title = info["pronouncer_title"]["value"]
+            elif "pronouncer_pronouncer" in info:
+                new_pronouncer = info["pronouncer_pronouncer"]["value"]
+            elif "pronouncer_description" in info:
+                new_description = info["pronouncer_description"]["value"]
+
+        client.views_update(
+            token=bot_token,
+            view={
+                "type": "modal",
+                "title": {"type": "plain_text", "text": "Add a pronouncer"},
+                "blocks": [
+                    {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"Thanks for the submission!\nI'll add your pronouncer for *{new_title}* to the database.\nYou can close this window."
+                        }
+                    }
+                ]
+            },
+            view_id=view_id
+        )
+
+        new_pronouncer = {
+            "Title": new_title,
+            "Pronouncer": new_pronouncer,
+            "Description": new_description
+        }
+
+        pronouncer_data.append(new_pronouncer)
+
+        sorted_pronouncers = sorted(pronouncer_data, key=lambda x: x["Title"].lower())
+
+        with open("Python/pronouncers.json", "w") as json_pronouncers:
+            json.dump(sorted_pronouncers, json_pronouncers, indent=4)
+
+        return "OK"
+
+    else:
+        return "OK"
+
 def handle_pronouncer_request(channel_id, timestamp, user_id):
     conversation = client.conversations_replies(
         channel=channel_id,
@@ -167,7 +182,7 @@ def handle_pronouncer_request(channel_id, timestamp, user_id):
     client.chat_postMessage(
         channel=channel_id,
         thread_ts=timestamp,
-        text=f"Hey <@{user_id}>, thanks for calling PronouncerBot. I'll look for a pronouncer for \"{message_text}\"."
+        text=f"Hey <@{user_id}>, thanks for calling PronouncerBot.\nI'll look for a pronouncer for \"{message_text}\"."
         )
 
     # search the database for the message text
@@ -216,9 +231,8 @@ def handle_pronouncer_request(channel_id, timestamp, user_id):
         client.chat_postMessage(
             channel=channel_id,
             thread_ts=timestamp,
-            text=f"I found more than 10 potential matches. Please try again (but be more specific)!"
+            text=f"I found more than 10 potential matches.\nPlease try again (but try to be more specific)!"
             )
-
 
 if __name__ == '__main__':
     app.run(debug=True)
