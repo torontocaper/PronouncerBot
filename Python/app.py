@@ -24,72 +24,99 @@ print(f"{datetime.now()}: Current event cache: {event_cache}.")
 @app.route("/", methods=["POST"])
 def handle_slack_event():
     print(f"{datetime.now()}: Request received. Starting event handler.")
-    
+
     if "payload" in request.form:
-        print(f"{datetime.now()}: Shortcut invoked. Proceeding with modal.")
+        print(f"{datetime.now()}: Payload received.")
         payload = json.loads(request.form["payload"])
+        print(payload)
         trigger_id = payload["trigger_id"]
-        client.views_open(
-            trigger_id=trigger_id,
-            view={
-                "type": "modal",
-                "title": {"type": "plain_text", "text": "Add a pronouncer"},
-                "submit": {"type": "plain_text", "text": "Add Pronouncer"},
-                "blocks": [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "Use this form to add an entry to the CP Pronouncer Guide!"
-                        }
-                    },
-                    {
-                        "type": "input",
-                        "element": {
-                            "type": "plain_text_input",
-                            "action_id": "pronouncer_title",
-                            "initial_value": "The unfamiliar term"
+        
+        if payload["type"] == "shortcut":
+            print(f"{datetime.now()}: Shortcut invoked. Opening modal.")
+            client.views_open(
+                trigger_id=trigger_id,
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Add a pronouncer"},
+                    "submit": {"type": "plain_text", "text": "Submit"},
+                    "callback_id": "submit_pronouncer",
+                    "blocks": [
+                        {
+                            "type": "input",
+                            "element": {
+                                "type": "plain_text_input",
+                                "action_id": "pronouncer_title",
+                            },
+                            "label": {
+                                "type": "plain_text",
+                                "text": "Title"
+                            }
                         },
-                        "label": {
-                            "type": "plain_text",
-                            "text": "Title"
-                        }
-                    },
-                    {
-                        "type": "input",
-                        "element": {
-                            "type": "plain_text_input",
-                            "action_id": "pronouncer_pronouncer",
-                            "initial_value": "Pronouncer goes here"
+                        {
+                            "type": "input",
+                            "element": {
+                                "type": "plain_text_input",
+                                "action_id": "pronouncer_pronouncer",
+                            },
+                            "label": {
+                                "type": "plain_text",
+                                "text": "Pronouncer"
+                            }
                         },
-                        "label": {
-                            "type": "plain_text",
-                            "text": "Pronouncer"
+                        {
+                            "type": "input",
+                            "element": {
+                                "type": "plain_text_input",
+                                "action_id": "pronouncer_description",
+                            },
+                            "label": {
+                                "type": "plain_text",
+                                "text": "Description (optional)"
+                            }
                         }
-                    },
-                    {
-                        "type": "input",
-                        "element": {
-                            "type": "plain_text_input",
-                            "action_id": "pronouncer_description",
-                            "initial_value": "A brief description (optional)"
-                        },
-                        "label": {
-                            "type": "plain_text",
-                            "text": "Description"
-                        }
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "When you're ready, click the button!"
-                        },
-                    }
-	            ]
-            }           
-        )
-        return "OK"
+                    ]
+                }           
+            )
+            return "OK"
+
+        elif payload["type"] == "view_submission":
+            print(f"{datetime.now()}: Submission received. Processing input.")
+            view_id = payload["view"]["id"]
+            client.views_update(
+                token=bot_token,
+                view={
+                    "type": "modal",
+                    "title": {"type": "plain_text", "text": "Add a pronouncer"},
+                    "blocks": [
+                        {
+			            "type": "section",
+			            "text": {
+				            "type": "plain_text",
+				            "text": "Thanks for the submission! You can close this box."
+                            }
+		                }
+                    ]
+                },
+                view_id=view_id
+            )
+
+            values = payload["view"]["state"]["values"]
+            
+            for key, info in values.items():
+                print(f"Random key: {key}\nInfo: {info}")
+                if "pronouncer_title" in info:
+                    new_title = info["pronouncer_title"]["value"]
+                elif "pronouncer_pronouncer" in info:
+                    new_pronouncer = info["pronouncer_pronouncer"]["value"]
+                elif "pronouncer_description" in info:
+                    new_description = info["pronouncer_description"]["value"]
+            
+            print(f"{new_title} - {new_pronouncer} ({new_description})")
+
+            return "OK"
+      
+        else:
+            return "OK"
 
     request_data = request.get_json()
 
