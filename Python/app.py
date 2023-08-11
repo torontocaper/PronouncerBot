@@ -19,6 +19,7 @@ with open("Python/pronouncers.json", "r") as json_file:
 app = Flask(__name__)
 
 event_cache = []
+
 print(f"{datetime.now()}: Current event cache: {event_cache}.")
 
 @app.route("/", methods=["POST"])
@@ -65,16 +66,16 @@ def handle_slack_event():
                 return "OK"
             else:
                 handle_pronouncer_request(channel_id, timestamp, user_id)
-                
                 return "OK"
 
 def handle_payload(request_data):
     print(f"{datetime.now()}: Payload received.")
+    print(request_data.form)
     payload = json.loads(request_data.form["payload"])
     trigger_id = payload["trigger_id"]
     
-    # if the user clicked the shortcut, open a modal
-    if payload["type"] == "shortcut":
+    # if the user clicked the "Add pronouncer" shortcut, open a modal to add a pronouncer
+    if payload["type"] == "shortcut" and payload["callback_id"] == "add_pronouncer":
         print(f"{datetime.now()}: Shortcut invoked. Opening modal.")
         client.views_open(
             trigger_id=trigger_id,
@@ -133,6 +134,24 @@ def handle_payload(request_data):
                 ]
             }           
         )
+        return "OK"
+
+    # if the user requested the pronouncer list, give it to them!
+    elif payload["type"] == "shortcut" and payload["callback_id"] == "get_pronouncer_list":
+        print("Pronouncer list requested.")
+        for entry in pronouncer_data:
+            title = entry["Title"]
+            pronouncer = entry["Pronouncer"]
+            description = entry["Description"]
+
+            if title[0].lower() in "abc":
+                if description:                
+                    print(f"{title} ({description}) - {pronouncer}")
+                else:
+                    print(f"{title} - {pronouncer}")
+
+
+
         return "OK"
 
     # if the user submitted a form, add the pronouncer

@@ -1055,6 +1055,11 @@
         "Description": null
     },
     {
+        "Title": "Bonnie Lysyk",
+        "Pronouncer": "LIH'-sik",
+        "Description": "Ontario auditor general"
+    },
+    {
         "Title": "Borje Salming",
         "Pronouncer": "BOHR'-yuh SAHL'-ming",
         "Description": "former Toronto Maple Leafs defenceman"
@@ -1713,16 +1718,6 @@
         "Title": "Conroy Sewepagaham",
         "Pronouncer": "see-wah-PEG'-ah-ham",
         "Description": "chief of Little Red River First Nation, Alta."
-    },
-    {
-        "Title": "Const. Joe Smyth",
-        "Pronouncer": "SMEYE'-th",
-        "Description": "Royal Newfoundland Constabulary"
-    },
-    {
-        "Title": "Const. John Zivcic",
-        "Pronouncer": "ZIV'-chick",
-        "Description": "Toronto police officer killed in 2013 crash"
     },
     {
         "Title": "Coquihalla (Highway), B.C.",
@@ -3165,6 +3160,11 @@
         "Description": "Nunavut premier"
     },
     {
+        "Title": "Joe Smyth, Const.",
+        "Pronouncer": "SMEYE'-th",
+        "Description": "Royal Newfoundland Constabulary"
+    },
+    {
         "Title": "Joel Armia",
         "Pronouncer": "yoh-EHL'  ahr-MEE'-yuh",
         "Description": "Montreal Canadiens forward"
@@ -3193,6 +3193,11 @@
         "Title": "John Wiersema",
         "Pronouncer": "WERSE'-ih-mah",
         "Description": "former interim Auditor General, appointed in May 2011 for a mandate of six months after Sheila Fraser retired"
+    },
+    {
+        "Title": "John Zivcic, Const.",
+        "Pronouncer": "ZIV'-chick",
+        "Description": "Toronto police officer killed in 2013 crash"
     },
     {
         "Title": "Johnny Altinger",
@@ -3822,6 +3827,11 @@
     {
         "Title": "Lacombe, Alta.",
         "Pronouncer": "la-KOHM'",
+        "Description": null
+    },
+    {
+        "Title": "Lahaina, Hawaii",
+        "Pronouncer": "luh-HYE'-nuh",
         "Description": null
     },
     {
