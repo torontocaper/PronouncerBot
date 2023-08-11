@@ -71,7 +71,6 @@ def handle_slack_event():
 def handle_payload(request_data):
     print(f"{datetime.now()}: Payload received.")
     payload = json.loads(request_data.form["payload"])
-    print(payload)
     trigger_id = payload["trigger_id"]
     
     # if the user clicked the shortcut, open a modal
@@ -89,11 +88,11 @@ def handle_payload(request_data):
                         "type": "input",
                         "hint": {
                             "type": "plain_text",
-                            "text": "The name of the person, place or thing",
+                            "text": "The name of the person, place or thing"
                         },
                         "element": {
                             "type": "plain_text_input",
-                            "action_id": "pronouncer_title",
+                            "action_id": "pronouncer_title"
                         },
                         "label": {
                             "type": "plain_text",
@@ -104,11 +103,11 @@ def handle_payload(request_data):
                         "type": "input",
                         "hint": {
                             "type": "plain_text",
-                            "text": "How do you pronounce the (difficult part of the) term?",
+                            "text": "How do you pronounce the (difficult part of the) term?"
                         },
                         "element": {
                             "type": "plain_text_input",
-                            "action_id": "pronouncer_pronouncer",
+                            "action_id": "pronouncer_pronouncer"
                         },
                         "label": {
                             "type": "plain_text",
@@ -120,11 +119,11 @@ def handle_payload(request_data):
                         "optional": True,
                         "hint": {
                             "type": "plain_text",
-                            "text": "A brief description of the entry, if applicable",
+                            "text": "A brief description of the entry, if applicable"
                         },
                         "element": {
                             "type": "plain_text_input",
-                            "action_id": "pronouncer_description",
+                            "action_id": "pronouncer_description"
                         },
                         "label": {
                             "type": "plain_text",
@@ -136,10 +135,10 @@ def handle_payload(request_data):
         )
         return "OK"
 
+    # if the user submitted a form, add the pronouncer
     elif payload["type"] == "view_submission":
         print(f"{datetime.now()}: Submission received. Processing input.")
         view_id = payload["view"]["id"]
-        
         values = payload["view"]["state"]["values"]
         
         for key, info in values.items():
@@ -152,6 +151,7 @@ def handle_payload(request_data):
 
         client.views_update(
             token=bot_token,
+            view_id=view_id,
             view={
                 "type": "modal",
                 "title": {"type": "plain_text", "text": "Add a pronouncer"},
@@ -165,7 +165,6 @@ def handle_payload(request_data):
                     }
                 ]
             },
-            view_id=view_id
         )
 
         new_pronouncer = {

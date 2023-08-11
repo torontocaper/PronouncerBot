@@ -2900,6 +2900,11 @@
         "Description": "ABC reporter"
     },
     {
+        "Title": "Ile-a-la-Crosse, Sask.",
+        "Pronouncer": "eye-lah-CROSS'",
+        "Description": null
+    },
+    {
         "Title": "Illecillewaet, B.C.",
         "Pronouncer": "il-ih-SIL'-ih-wit",
         "Description": null
@@ -4190,6 +4195,11 @@
         "Description": null
     },
     {
+        "Title": "Maite Blanchette Vezina",
+        "Pronouncer": "my-TAY' blahn-SHEHT' veh-zee-NUH'",
+        "Description": "Quebec politician"
+    },
+    {
         "Title": "Makaroff, Man.",
         "Pronouncer": "MAK'-a-roff",
         "Description": null
@@ -4440,11 +4450,6 @@
         "Description": null
     },
     {
-        "Title": "Maite Blanchette Vezina",
-        "Pronouncer": "my-TAY' blahn-SHEHT' veh-zee-NUH'",
-        "Description": "Quebec politician"
-    },
-    {
         "Title": "Meagher's Grant, N.S.",
         "Pronouncer": "mahrz",
         "Description": null
@@ -4463,6 +4468,11 @@
         "Title": "Medonte, Ont.",
         "Pronouncer": "meh-DON'-tay",
         "Description": null
+    },
+    {
+        "Title": "Melanie Joly",
+        "Pronouncer": "zhoh-LEE'",
+        "Description": "federal Liberal cabinet minister"
     },
     {
         "Title": "Melanie Oncescu, Staff Sgt.",
@@ -4803,11 +4813,6 @@
         "Title": "Myron Demkiw",
         "Pronouncer": "DEM'-kyew",
         "Description": "Toronto police chief"
-    },
-    {
-        "Title": "Melanie Joly",
-        "Pronouncer": "zhoh-LEE'",
-        "Description": "federal Liberal cabinet minister"
     },
     {
         "Title": "Naats'ihch'oh National Park Reserve, N.W.T",
@@ -8093,10 +8098,5 @@
         "Title": "Zumiez",
         "Pronouncer": "ZOO'-meez",
         "Description": "U.S.-based clothing store"
-    },
-    {
-        "Title": "Ile-a-la-Crosse, Sask.",
-        "Pronouncer": "eye-lah-CROSS'",
-        "Description": null
     }
 ]
