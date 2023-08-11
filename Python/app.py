@@ -74,6 +74,7 @@ def handle_payload(request_data):
     print(payload)
     trigger_id = payload["trigger_id"]
     
+    # if the user clicked the shortcut, open a modal
     if payload["type"] == "shortcut":
         print(f"{datetime.now()}: Shortcut invoked. Opening modal.")
         client.views_open(
@@ -86,6 +87,10 @@ def handle_payload(request_data):
                 "blocks": [
                     {
                         "type": "input",
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "The name of the person, place or thing",
+                        },
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "pronouncer_title",
@@ -97,6 +102,10 @@ def handle_payload(request_data):
                     },
                     {
                         "type": "input",
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "How do you pronounce the (difficult part of the) term?",
+                        },
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "pronouncer_pronouncer",
@@ -108,13 +117,18 @@ def handle_payload(request_data):
                     },
                     {
                         "type": "input",
+                        "optional": True,
+                        "hint": {
+                            "type": "plain_text",
+                            "text": "A brief description of the entry, if applicable",
+                        },
                         "element": {
                             "type": "plain_text_input",
                             "action_id": "pronouncer_description",
                         },
                         "label": {
                             "type": "plain_text",
-                            "text": "Description (optional)"
+                            "text": "Description"
                         }
                     }
                 ]
